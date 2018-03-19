@@ -24,7 +24,7 @@ void renderParticipant(std::stringstream& ss, const ParticipantInfo participantI
 	ss << "\"mRacePosition\":" << participantInfo.mRacePosition << ",";
 	ss << "\"mLapsCompleted\":" << participantInfo.mLapsCompleted << ",";
 	ss << "\"mCurrentLap\":" << participantInfo.mCurrentLap << ",";
-	ss << "\"mCurrentSector\":" << participantInfo.mCurrentSector << "}";
+	ss << "\"mCurrentSector\":" << participantInfo.mCurrentSector << ",";
 }
 
 void renderParticipants(std::stringstream& ss, const SharedMemory* sharedData)	{
@@ -38,6 +38,17 @@ void renderParticipants(std::stringstream& ss, const SharedMemory* sharedData)	{
 
 		for (int i = 0; i < sharedData->mNumParticipants; i++)	{
 			renderParticipant(ss, sharedData->mParticipantInfo[i]);
+			// Fill additional pcars2 participant data here:
+			ss << "\"mRaceStates\":" << sharedData->mRaceStates[i] << ",";
+			ss << "\"mPitModes\":" << sharedData->mPitModes[i] << ",";
+			ss << "\"mFastestLapTimes\":" << sharedData->mFastestLapTimes[i] << ",";
+			ss << "\"mLastLapTimes\":" << sharedData->mLastLapTimes[i] << ",";
+			ss << "\"mOrientations\":" << sharedData->mOrientations[i] << ",";
+			ss << "\"mSpeeds\":" << sharedData->mSpeeds[i] << ",";
+			ss << "\"mCarNames\":" << sharedData->mCarNames[i] << ",";
+			ss << "\"mCarClassNames\":" << sharedData->mCarClassNames[i];
+			// End pcars2 participant data
+			ss << "}";
 			if (i < (sharedData->mNumParticipants - 1))	{
 				ss << ",";
 			}
