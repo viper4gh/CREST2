@@ -30,7 +30,7 @@
 // Header version number to test against
 enum
 {
-  SHARED_MEMORY_VERSION = 9
+  SHARED_MEMORY_VERSION = 6
 };
 
 // Maximum allowed length of string
@@ -43,12 +43,6 @@ enum
 enum
 {
   STORED_PARTICIPANTS_MAX = 64
-};
-
-// Maximum length of a tyre compound name
-enum
-{
- TYRE_COMPOUND_NAME_LENGTH_MAX = 40
 };
 
 // Tyres
@@ -79,7 +73,6 @@ enum
   GAME_FRONT_END,
   GAME_INGAME_PLAYING,
   GAME_INGAME_PAUSED,
-	GAME_INGAME_INMENU_TIME_TICKING,
   GAME_INGAME_RESTARTING,
   GAME_INGAME_REPLAY,
   GAME_FRONT_END_REPLAY,
@@ -101,7 +94,7 @@ enum
   SESSION_MAX
 };
 
-// (Type#3) RaceState (to be used with 'mRaceState' and 'mRaceStates')
+// (Type#3) RaceState (to be used with 'mRaceState')
 enum
 {
   RACESTATE_INVALID,
@@ -115,21 +108,30 @@ enum
   RACESTATE_MAX
 };
 
+// (Type#4) Current Sector (to be used with 'mCurrentSector')
+enum
+{
+  SECTOR_INVALID = 0, 
+  SECTOR_START,
+  SECTOR_SECTOR1,
+  SECTOR_SECTOR2,
+  SECTOR_FINISH,
+  SECTOR_STOP,
+  //-------------
+  SECTOR_MAX
+};
+
 // (Type#5) Flag Colours (to be used with 'mHighestFlagColour')
 enum
 {
-  FLAG_COLOUR_NONE = 0,             // Not used for actual flags, only for some query functions
-  FLAG_COLOUR_GREEN,                // End of danger zone, or race started
-  FLAG_COLOUR_BLUE,                 // Faster car wants to overtake the participant
-  FLAG_COLOUR_WHITE_SLOW_CAR,       // Slow car in area
-  FLAG_COLOUR_WHITE_FINAL_LAP,      // Final Lap
-  FLAG_COLOUR_RED,                  // Huge collisions where one or more cars become wrecked and block the track
-  FLAG_COLOUR_YELLOW,               // Danger on the racing surface itself
-  FLAG_COLOUR_DOUBLE_YELLOW,        // Danger that wholly or partly blocks the racing surface
-  FLAG_COLOUR_BLACK_AND_WHITE,      // Unsportsmanlike conduct
-  FLAG_COLOUR_BLACK_ORANGE_CIRCLE,  // Mechanical Failure
-  FLAG_COLOUR_BLACK,                // Participant disqualified
-  FLAG_COLOUR_CHEQUERED,            // Chequered flag
+  FLAG_COLOUR_NONE = 0,       // Not used for actual flags, only for some query functions
+  FLAG_COLOUR_GREEN,          // End of danger zone, or race started
+  FLAG_COLOUR_BLUE,           // Faster car wants to overtake the participant
+  FLAG_COLOUR_WHITE,          // Approaching a slow car
+  FLAG_COLOUR_YELLOW,         // Danger on the racing surface itself
+  FLAG_COLOUR_DOUBLE_YELLOW,  // Danger that wholly or partly blocks the racing surface
+  FLAG_COLOUR_BLACK,          // Participant disqualified
+  FLAG_COLOUR_CHEQUERED,      // Chequered flag
   //-------------
   FLAG_COLOUR_MAX
 };
@@ -153,7 +155,6 @@ enum
   PIT_MODE_IN_PIT,
   PIT_MODE_DRIVING_OUT_OF_PITS,
   PIT_MODE_IN_GARAGE,
-  PIT_MODE_DRIVING_OUT_OF_GARAGE,
   //-------------
   PIT_MODE_MAX
 };
@@ -161,20 +162,16 @@ enum
 // (Type#8) Pit Stop Schedule (to be used with 'mPitSchedule')
 enum
 {
-  PIT_SCHEDULE_NONE = 0,            // Nothing scheduled
-  PIT_SCHEDULE_PLAYER_REQUESTED,    // Used for standard pit sequence - requested by player
-  PIT_SCHEDULE_ENGINEER_REQUESTED,  // Used for standard pit sequence - requested by engineer
-  PIT_SCHEDULE_DAMAGE_REQUESTED,    // Used for standard pit sequence - requested by engineer for damage
-  PIT_SCHEDULE_MANDATORY,           // Used for standard pit sequence - requested by engineer from career enforced lap number
-  PIT_SCHEDULE_DRIVE_THROUGH,       // Used for drive-through penalty
-  PIT_SCHEDULE_STOP_GO,             // Used for stop-go penalty
-  PIT_SCHEDULE_PITSPOT_OCCUPIED,    // Used for drive-through when pitspot is occupied
+  PIT_SCHEDULE_NONE = 0,        // Nothing scheduled
+  PIT_SCHEDULE_STANDARD,        // Used for standard pit sequence
+  PIT_SCHEDULE_DRIVE_THROUGH,   // Used for drive-through penalty
+  PIT_SCHEDULE_STOP_GO,         // Used for stop-go penalty
   //-------------
   PIT_SCHEDULE_MAX
 };
 
 // (Type#9) Car Flags (to be used with 'mCarFlags')
-enum CarFlags
+enum
 {
   CAR_HEADLIGHT         = (1<<0),
   CAR_ENGINE_ACTIVE     = (1<<1),
@@ -239,13 +236,6 @@ enum
   TERRAIN_B2RUMBLES,
   TERRAIN_ROUGH_SAND_MEDIUM,
   TERRAIN_ROUGH_SAND_HEAVY,
-  TERRAIN_SNOWWALLS,
-  TERRAIN_ICE_ROAD,
-  TERRAIN_RUNOFF_ROAD,
-  TERRAIN_ILLEGAL_STRIP,
-	TERRAIN_PAINT_CONCRETE,
-	TERRAIN_PAINT_CONCRETE_ILLEGAL,
-	TERRAIN_RALLY_TARMAC,
 
   //-------------
   TERRAIN_MAX
@@ -273,7 +263,7 @@ typedef struct
   unsigned int mRacePosition;                      // [ RANGE = 1->... ]   [ UNSET = 0 ]
   unsigned int mLapsCompleted;                     // [ RANGE = 0->... ]   [ UNSET = 0 ]
   unsigned int mCurrentLap;                        // [ RANGE = 0->... ]   [ UNSET = 0 ]
-  int mCurrentSector;                              // [ RANGE = 0->... ]   [ UNSET = -1 ]
+  unsigned int mCurrentSector;                     // [ enum (Type#4) Current Sector ]
 } ParticipantInfo;
 
 
@@ -307,12 +297,14 @@ typedef struct
 
   // Event information
   unsigned int mLapsInEvent;                        // [ RANGE = 0->... ]   [ UNSET = 0 ]
-  char mTrackLocation[STRING_LENGTH_MAX];           // [ string ] - untranslated shortened English name
-  char mTrackVariation[STRING_LENGTH_MAX];          // [ string ]- untranslated shortened English variation description
+  char mTrackLocation[STRING_LENGTH_MAX];           // [ string ]
+  char mTrackVariation[STRING_LENGTH_MAX];          // [ string ]
   float mTrackLength;                               // [ UNITS = Metres ]   [ RANGE = 0.0f->... ]    [ UNSET = 0.0f ]
 
+  // New in PCARS2
+  float unknown;
+
   // Timings
-  int mNumSectors;                                  // [ RANGE = 0->... ]   [ UNSET = -1 ]
   bool mLapInvalidated;                             // [ UNITS = boolean ]   [ RANGE = false->true ]   [ UNSET = false ]
   float mBestLapTime;                               // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = -1.0f ]
   float mLastLapTime;                               // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = 0.0f ]
@@ -383,11 +375,11 @@ typedef struct
   unsigned int mTerrain[TYRE_MAX];                 // [ enum (Type#11) Terrain Materials ]
   float mTyreY[TYRE_MAX];                          // [ UNITS = Local Space  Y ]
   float mTyreRPS[TYRE_MAX];                        // [ UNITS = Revolutions per second ]
-	float mTyreSlipSpeed[TYRE_MAX];                  // OBSOLETE, kept for backward compatibility only
+  float mTyreSlipSpeed[TYRE_MAX];                  // [ UNITS = Metres per-second ]
   float mTyreTemp[TYRE_MAX];                       // [ UNITS = Celsius ]   [ UNSET = 0.0f ]
-	float mTyreGrip[TYRE_MAX];                       // OBSOLETE, kept for backward compatibility only
+  float mTyreGrip[TYRE_MAX];                       // [ RANGE = 0.0f->1.0f ]
   float mTyreHeightAboveGround[TYRE_MAX];          // [ UNITS = Local Space  Y ]
-	float mTyreLateralStiffness[TYRE_MAX];           // OBSOLETE, kept for backward compatibility only
+  float mTyreLateralStiffness[TYRE_MAX];           // [ UNITS = Lateral stiffness coefficient used in tyre deformation ]
   float mTyreWear[TYRE_MAX];                       // [ RANGE = 0.0f->1.0f ]
   float mBrakeDamage[TYRE_MAX];                    // [ RANGE = 0.0f->1.0f ]
   float mSuspensionDamage[TYRE_MAX];               // [ RANGE = 0.0f->1.0f ]
@@ -411,54 +403,7 @@ typedef struct
   float mWindDirectionX;                           // [ UNITS = Normalised Vector X ]
   float mWindDirectionY;                           // [ UNITS = Normalised Vector Y ]
   float mCloudBrightness;                          // [ RANGE = 0.0f->... ]
-
-  //PCars2 additions start, version 8
-	// Sequence Number to help slightly with data integrity reads
-	volatile unsigned int mSequenceNumber;          // 0 at the start, incremented at start and end of writing, so odd when Shared Memory is being filled, even when the memory is not being touched
-
-	//Additional car variables
-	float mWheelLocalPositionY[TYRE_MAX];           // [ UNITS = Local Space  Y ]
-	float mSuspensionTravel[TYRE_MAX];              // [ UNITS = meters ] [ RANGE 0.f =>... ]  [ UNSET =  0.0f ]
-	float mSuspensionVelocity[TYRE_MAX];            // [ UNITS = Rate of change of pushrod deflection ] [ RANGE 0.f =>... ]  [ UNSET =  0.0f ]
-	float mAirPressure[TYRE_MAX];                   // [ UNITS = PSI ]  [ RANGE 0.f =>... ]  [ UNSET =  0.0f ]
-	float mEngineSpeed;                             // [ UNITS = Rad/s ] [UNSET = 0.f ]
-	float mEngineTorque;                            // [ UNITS = Newton Meters] [UNSET = 0.f ] [ RANGE = 0.0f->... ]
-	float mWings[2];                                // [ RANGE = 0.0f->1.0f ] [UNSET = 0.f ]
-	float mHandBrake;                               // [ RANGE = 0.0f->1.0f ] [UNSET = 0.f ]
-
-	// additional race variables
-	float	mCurrentSector1Times[STORED_PARTICIPANTS_MAX];        // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = -1.0f ]
-	float	mCurrentSector2Times[STORED_PARTICIPANTS_MAX];        // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = -1.0f ]
-	float	mCurrentSector3Times[STORED_PARTICIPANTS_MAX];        // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = -1.0f ]
-	float	mFastestSector1Times[STORED_PARTICIPANTS_MAX];        // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = -1.0f ]
-	float	mFastestSector2Times[STORED_PARTICIPANTS_MAX];        // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = -1.0f ]
-	float	mFastestSector3Times[STORED_PARTICIPANTS_MAX];        // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = -1.0f ]
-	float	mFastestLapTimes[STORED_PARTICIPANTS_MAX];            // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = -1.0f ]
-	float	mLastLapTimes[STORED_PARTICIPANTS_MAX];               // [ UNITS = seconds ]   [ RANGE = 0.0f->... ]   [ UNSET = -1.0f ]
-	bool	mLapsInvalidated[STORED_PARTICIPANTS_MAX];            // [ UNITS = boolean for all participants ]   [ RANGE = false->true ]   [ UNSET = false ]
-	unsigned int	mRaceStates[STORED_PARTICIPANTS_MAX];         // [ enum (Type#3) Race State ]
-	unsigned int	mPitModes[STORED_PARTICIPANTS_MAX];           // [ enum (Type#7)  Pit Mode ]
-	float mOrientations[STORED_PARTICIPANTS_MAX][VEC_MAX];      // [ UNITS = Euler Angles ]
-	float mSpeeds[STORED_PARTICIPANTS_MAX];                     // [ UNITS = Metres per-second ]   [ RANGE = 0.0f->... ]
-	char mCarNames[STORED_PARTICIPANTS_MAX][STRING_LENGTH_MAX]; // [ string ]
-	char mCarClassNames[STORED_PARTICIPANTS_MAX][STRING_LENGTH_MAX]; // [ string ]
-
-																											// additional race variables
-	int		mEnforcedPitStopLap;                          // [ UNITS = in which lap there will be a mandatory pitstop] [ RANGE = 0.0f->... ] [ UNSET = -1 ]
-	char	mTranslatedTrackLocation[STRING_LENGTH_MAX];  // [ string ]
-	char	mTranslatedTrackVariation[STRING_LENGTH_MAX]; // [ string ]
-	float	mBrakeBias;																		// [ RANGE = 0.0f->1.0f... ]   [ UNSET = -1.0f ]
-	float mTurboBoostPressure;													//	 RANGE = 0.0f->1.0f... ]   [ UNSET = -1.0f ]
-	char	mTyreCompound[TYRE_MAX][TYRE_COMPOUND_NAME_LENGTH_MAX];// [ strings  ]
-	unsigned int	mPitSchedules[STORED_PARTICIPANTS_MAX];  // [ enum (Type#7)  Pit Mode ]
-	unsigned int	mHighestFlagColours[STORED_PARTICIPANTS_MAX];                 // [ enum (Type#5) Flag Colour ]
-	unsigned int	mHighestFlagReasons[STORED_PARTICIPANTS_MAX];                 // [ enum (Type#6) Flag Reason ]
-	unsigned int	mNationalities[STORED_PARTICIPANTS_MAX];										  // [ nationality table , SP AND UNSET = 0 ] See nationalities.txt file for details
-	float	mSnowDensity;																// [ UNITS = How much snow will fall ]   [ RANGE = 0.0f->1.0f ], this will be non zero only in Snow season, in other seasons whatever is falling from the sky is reported as rain
-	
-
 } SharedMemory;
 
 
 #endif  // _SHARED_MEMORY_HPP_
-
