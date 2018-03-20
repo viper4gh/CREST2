@@ -8,7 +8,7 @@
 #include <sstream>
 
 // Constants
-#define MAP_OBJECT_NAME "$pcars$"
+#define MAP_OBJECT_NAME "$pcars2$"
 #define HTTP_RESPONSE_503 "{\"status\": \"503 Service unavailable, is Project CARS running and is Shared Memory enabled?\"}"
 #define HTTP_RESPONSE_409 "{\"status\": \"409 Conflict, are CREST and Project CARS both at the latest version?\"}"
 #define GZIP_THRESHOLD 128
