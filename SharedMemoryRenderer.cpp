@@ -38,17 +38,28 @@ void renderParticipants(std::stringstream& ss, const SharedMemory* sharedData)	{
 
 		for (int i = 0; i < sharedData->mNumParticipants; i++)	{
 			renderParticipant(ss, sharedData->mParticipantInfo[i]);
-			// Fill additional pcars2 participant data here:
+			// pcars2 additional participant data:
 			ss << "\"mRaceStates\":" << sharedData->mRaceStates[i] << ",";
 			ss << "\"mPitModes\":" << sharedData->mPitModes[i] << ",";
 			ss << "\"mFastestLapTimes\":" << sharedData->mFastestLapTimes[i] << ",";
 			ss << "\"mLastLapTimes\":" << sharedData->mLastLapTimes[i] << ",";
+			ss << "\"mFastestSector1Times\":" << sharedData->mFastestSector1Times[i] << ",";
+			ss << "\"mFastestSector2Times\":" << sharedData->mFastestSector2Times[i] << ",";
+			ss << "\"mFastestSector3Times\":" << sharedData->mFastestSector3Times[i] << ",";
+			ss << "\"mCurrentSector1Times\":" << sharedData->mCurrentSector1Times[i] << ",";
+			ss << "\"mCurrentSector2Times\":" << sharedData->mCurrentSector2Times[i] << ",";
+			ss << "\"mCurrentSector3Times\":" << sharedData->mCurrentSector3Times[i] << ",";
+			ss << "\"mLapsInvalidated\":" << sharedData->mLapsInvalidated[i] << ",";
 			ss << "\"mOrientations\":" << sharedData->mOrientations[i] << ",";
 			ss << "\"mSpeeds\":" << sharedData->mSpeeds[i] << ",";
-			ss << "\"mCarNames\":" << sharedData->mCarNames[i] << ",";
-			ss << "\"mCarClassNames\":" << sharedData->mCarClassNames[i];
+			ss << "\"mCarNames\":\"" << sharedData->mCarNames[i] << "\",";
+			ss << "\"mCarClassNames\":\"" << sharedData->mCarClassNames[i] << "\",";
+			ss << "\"mPitSchedules\":" << sharedData->mPitSchedules[i] << ",";
+			ss << "\"mHighestFlagColours\":" << sharedData->mHighestFlagColours[i] << ",";
+			ss << "\"mHighestFlagReasons\":" << sharedData->mPitModes[i] << ",";
+			ss << "\"mNationalities\":" << sharedData->mPitModes[i] << "}";
 			// End pcars2 participant data
-			ss << "}";
+			
 			if (i < (sharedData->mNumParticipants - 1))	{
 				ss << ",";
 			}
@@ -77,7 +88,10 @@ void renderEventInformation(std::stringstream& ss, const SharedMemory* sharedDat
 	ss << "\"mLapsInEvent\":" << sharedData->mLapsInEvent << ",";
 	ss << "\"mTrackLocation\":\"" << sharedData->mTrackLocation << "\",";
 	ss << "\"mTrackVariation\":\"" << sharedData->mTrackVariation << "\",";
-	ss << "\"mTrackLength\":" << sharedData->mTrackLength << "}";
+	ss << "\"mTrackLength\":" << sharedData->mTrackLength << ",";
+	//pcars2 additional data
+	ss << "\"mTranslatedTrackLocation\":\"" << sharedData->mTranslatedTrackLocation << "\",";
+	ss << "\"mTranslatedTrackVariation\":\"" << sharedData->mTranslatedTrackVariation << "\"}";
 }
 
 void renderTimings(std::stringstream& ss, const SharedMemory* sharedData)	{
@@ -115,7 +129,9 @@ void renderFlags(std::stringstream& ss, const SharedMemory* sharedData)	{
 void renderPitInfo(std::stringstream& ss, const SharedMemory* sharedData)	{
 	ss << "\"pitInfo\":{";
 	ss << "\"mPitMode\":" << sharedData->mPitMode << ",";
-	ss << "\"mPitSchedule\":" << sharedData->mPitSchedule << "}";
+	ss << "\"mPitSchedule\":" << sharedData->mPitSchedule << ",";
+	//pcars2 additional data
+	ss << "\"mEnforcedPitStopLap\":" << sharedData->mEnforcedPitStopLap << "}";
 }
 
 void renderCarState(std::stringstream& ss, const SharedMemory* sharedData)	{
@@ -141,7 +157,15 @@ void renderCarState(std::stringstream& ss, const SharedMemory* sharedData)	{
 	ss << "\"mLastOpponentCollisionIndex\":" << sharedData->mLastOpponentCollisionIndex << ",";
 	ss << "\"mLastOpponentCollisionMagnitude\":" << sharedData->mLastOpponentCollisionMagnitude << ",";
 	ss << "\"mBoostActive\":" << (sharedData->mBoostActive ? "true" : "false") << ",";
-	ss << "\"mBoostAmount\":" << sharedData->mBoostAmount << "}";
+	ss << "\"mBoostAmount\":" << sharedData->mBoostAmount << ",";
+	//pcars2 additional data
+	ss << "\"mEngineSpeed\":" << sharedData->mEngineSpeed << ",";
+	ss << "\"mEngineTorque\":" << sharedData->mEngineTorque << ",";
+	ss << "\"mWings\":[" << sharedData->mWings[0] << "," << sharedData->mWings[1] << "],";
+	ss << "\"mHandBrake\":" << sharedData->mHandBrake << ",";
+	ss << "\"mBrakeBias\":" << sharedData->mBrakeBias << ",";
+	ss << "\"mTurboBoostPressure\":" << sharedData->mTurboBoostPressure << "}";
+
 }
 
 void renderMotionDeviceRelated(std::stringstream& ss, const SharedMemory* sharedData)	{
@@ -174,7 +198,14 @@ void renderWheelsTyres(std::stringstream& ss, const SharedMemory* sharedData)	{
 	ss << "\"mTyreLayerTemp\":[" << sharedData->mTyreLayerTemp[0] << "," << sharedData->mTyreLayerTemp[1] << "," << sharedData->mTyreLayerTemp[2] << "," << sharedData->mTyreLayerTemp[3] << "],";
 	ss << "\"mTyreCarcassTemp\":[" << sharedData->mTyreCarcassTemp[0] << "," << sharedData->mTyreCarcassTemp[1] << "," << sharedData->mTyreCarcassTemp[2] << "," << sharedData->mTyreCarcassTemp[3] << "],";
 	ss << "\"mTyreRimTemp\":[" << sharedData->mTyreRimTemp[0] << "," << sharedData->mTyreRimTemp[1] << "," << sharedData->mTyreRimTemp[2] << "," << sharedData->mTyreRimTemp[3] << "],";
-	ss << "\"mTyreInternalAirTemp\":[" << sharedData->mTyreInternalAirTemp[0] << "," << sharedData->mTyreInternalAirTemp[1] << "," << sharedData->mTyreInternalAirTemp[2] << "," << sharedData->mTyreInternalAirTemp[3] << "]}";
+	ss << "\"mTyreInternalAirTemp\":[" << sharedData->mTyreInternalAirTemp[0] << "," << sharedData->mTyreInternalAirTemp[1] << "," << sharedData->mTyreInternalAirTemp[2] << "," << sharedData->mTyreInternalAirTemp[3] << "],";
+	//pcars2 additional data
+	ss << "\"mWheelLocalPositionY\":[" << sharedData->mWheelLocalPositionY[0] << "," << sharedData->mWheelLocalPositionY[1] << "," << sharedData->mWheelLocalPositionY[2] << "," << sharedData->mWheelLocalPositionY[3] << "],";
+	ss << "\"mSuspensionTravel\":[" << sharedData->mSuspensionTravel[0] << "," << sharedData->mSuspensionTravel[1] << "," << sharedData->mSuspensionTravel[2] << "," << sharedData->mSuspensionTravel[3] << "],";
+	ss << "\"mSuspensionVelocity\":[" << sharedData->mSuspensionVelocity[0] << "," << sharedData->mSuspensionVelocity[1] << "," << sharedData->mSuspensionVelocity[2] << "," << sharedData->mSuspensionVelocity[3] << "],";
+	ss << "\"mAirPressure\":[" << sharedData->mAirPressure[0] << "," << sharedData->mAirPressure[1] << "," << sharedData->mAirPressure[2] << "," << sharedData->mAirPressure[3] << "],";
+	ss << "\"mTyreCompound\":[\"" << sharedData->mTyreCompound[0] << "\",\"" << sharedData->mTyreCompound[1] << "\",\"" << sharedData->mTyreCompound[2] << "\",\"" << sharedData->mTyreCompound[3] << "\"]}";
+
 }
 
 void renderCarDamage(std::stringstream& ss, const SharedMemory* sharedData)	{
@@ -192,7 +223,9 @@ void renderWeather(std::stringstream& ss, const SharedMemory* sharedData)	{
 	ss << "\"mWindSpeed\":" << sharedData->mWindSpeed << ",";
 	ss << "\"mWindDirectionX\":" << sharedData->mWindDirectionX << ",";
 	ss << "\"mWindDirectionY\":" << sharedData->mWindDirectionY << ",";
-	ss << "\"mCloudBrightness\":" << sharedData->mCloudBrightness << "}";
+	ss << "\"mCloudBrightness\":" << sharedData->mCloudBrightness << ",";
+	//pcars2 additional data
+	ss << "\"mSnowDensity\":" << sharedData->mSnowDensity << "}";
 }
 
 // Adds a comma, unless skipped
