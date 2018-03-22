@@ -6,7 +6,7 @@
 #include "fossa.h"
 
 // Configuration properties
-#define CREST2_VERSION "v0.0.4 Test"
+#define CREST2_VERSION "v0.0.4"
 #define POLL_TIME_IN_MILLIS 17
 #define ESC_KEY 27
 #define CREST_API_URL "/crest2/v1/api"
@@ -58,6 +58,7 @@ int main()	{
 	// Print some information on the console
 	printf("# CREST2 - CARS2 REST API %s\n", CREST2_VERSION);
 	printf("# (c) 2015 Lars Rosenquist\n\n");
+	printf("#          updated by Viper\n\n");
 	printf("# Server started on port %s\n", s_http_port);
 	printf("# API is available at http://localhost:%s%s \n", s_http_port, CREST_API_URL);
 	printf("# Press ESC to terminate\n");
