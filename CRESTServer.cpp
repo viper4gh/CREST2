@@ -57,7 +57,7 @@ int main()	{
 	
 	// Print some information on the console
 	printf("# CREST2 - CARS2 REST API %s\n", CREST2_VERSION);
-	printf("# (c) 2015 Lars Rosenquist\n\n");
+	printf("# (c) 2015 Lars Rosenquist\n");
 	printf("#          updated by Viper\n\n");
 	printf("# Server started on port %s\n", s_http_port);
 	printf("# API is available at http://localhost:%s%s \n", s_http_port, CREST_API_URL);
