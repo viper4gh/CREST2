@@ -50,7 +50,7 @@ void renderParticipants(std::stringstream& ss, const SharedMemory* sharedData)	{
 			ss << "\"mCurrentSector2Times\":" << sharedData->mCurrentSector2Times[i] << ",";
 			ss << "\"mCurrentSector3Times\":" << sharedData->mCurrentSector3Times[i] << ",";
 			ss << "\"mLapsInvalidated\":" << sharedData->mLapsInvalidated[i] << ",";
-			ss << "\"mOrientations\":" << sharedData->mOrientations[i] << ",";
+			ss << "\"mOrientations\":[" << sharedData->mOrientations[i][0] << "," << sharedData->mOrientations[i][1] << "," << sharedData->mOrientations[i][2] << "],";
 			ss << "\"mSpeeds\":" << sharedData->mSpeeds[i] << ",";
 			ss << "\"mCarNames\":\"" << sharedData->mCarNames[i] << "\",";
 			ss << "\"mCarClassNames\":\"" << sharedData->mCarClassNames[i] << "\",";
