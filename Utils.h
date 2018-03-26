@@ -1,3 +1,5 @@
+#define ZLIB_WINAPI
+
 #include <string>
 #include "zlib.h"
 

@@ -6,7 +6,7 @@ CREST.sdf
 Release/
 *.sdf
 
-zlib1.dll
+zlibwapi.dll
 lib/
 
 # User-specific files
