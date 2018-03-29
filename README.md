@@ -41,7 +41,7 @@ The project won't build without the proper setup of zlib. To properly enable zli
 # Connecting to Project CARS 2
 
 1. Start Project CARS 2.
-2. Enable Shared Memory in Options -> Visual -> Hardware
+2. Enable Shared Memory "Project CARS2" mode in the settings
 3. Open up a browser (Chrome for best results) and go to http://localhost:8180/crest2/v1/api
 4. Profit! F5/Refresh until you drop!
 
