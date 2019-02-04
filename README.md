@@ -21,7 +21,7 @@ Any web browser or HTTP client will be able to access the data both locally and 
 2. Open it up in Visual Studio 2017
 
 The project won't build without the proper setup of zlib. To properly enable zlib:
-1. Download and extract the compiled zlib.dll from http://www.zlib.net (Used http://zlib.net/zlib1211.zip)
+1. Download and extract the source code from http://www.zlib.net (Used http://zlib.net/zlib1211.zip)
 2. Extract and open .\contrib\vstudio\vc14\zlibvc.sln with Visual Studio
 3. Compile as Release and you will find 2 files in the folder .\contrib\vstudio\vc14\x86\ZlibDllRelease:
 - zlibwapi.lib - copy this file to the CREST2 source into the folder CREST2\lib
