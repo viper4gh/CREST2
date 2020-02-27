@@ -18,7 +18,7 @@ Any web browser or HTTP client will be able to access the data both locally and 
 # Building from source
 
 1. Download the source code
-2. Open it up in Visual Studio 2017
+2. Open it up in Visual Studio 2019
 
 The project won't build without the proper setup of zlib. To properly enable zlib:
 1. Download and extract the source code from http://www.zlib.net (Used http://zlib.net/zlib1211.zip)
