@@ -32,7 +32,7 @@ The project won't build without the proper setup of zlib. To properly enable zli
 1. Download the executable from https://drive.google.com/drive/folders/1zx12hGJttkTa0aG1jIO9AZ28VM7cDj-J or build it yourself.
 2. Start the application by double-clicking it.
 3. Windows will complain about security (coming from an unknown/unverified source) both when downloading and starting the application. Please allow/unblock the application in order to allow it to start. Windows Firewall will also ask for permission to access the local network. Please allow it access for proper functioning.
-4. If Windows complains about missing DLLs (e.g. MSVCR120.DLL or similar), please download and install the Visual C++ Redistributable Packages for Visual Studio 2017 from https://www.visualstudio.com/de/downloads/ (vcredist_x86.exe, scroll down to "Other Tools and Frameworks"), then start again.
+4. If Windows complains about missing DLLs (e.g. MSVCR120.DLL or similar), please download and install the Visual C++ Redistributable Packages for Visual Studio 2019 from https://www.visualstudio.com/de/downloads/ (vcredist_x86.exe, scroll down to "Other Tools and Frameworks"), then start again.
 5. Console will show a notification about the server being up and running and display port and URL information.
 
 # Connecting to Project CARS 2
