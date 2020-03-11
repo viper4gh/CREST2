@@ -15,22 +15,21 @@ Any web browser or HTTP client will be able to access the data both locally and 
 * See https://www.projectcarsgame.com/ for more info on Project CARS.
 * Latest binary download is always available at https://drive.google.com/drive/folders/1zx12hGJttkTa0aG1jIO9AZ28VM7cDj-J
 
-# Building from source
-
-1. Download the source code
-2. Open it up in Visual Studio 2019
-
-The project won't build without the proper setup of zlib. To properly enable zlib:
-1. Download and extract the source code from http://www.zlib.net (Used http://zlib.net/zlib1211.zip)
-2. Extract and open .\contrib\vstudio\vc14\zlibvc.sln with Visual Studio
-3. Compile as Release and you will find 2 files in the folder .\contrib\vstudio\vc14\x86\ZlibDllRelease:
-- zlibwapi.lib - copy this file to the CREST2 source into the folder CREST2\lib
-- zlibwapi.dll - After compiling CREST2 this file must be parallel to your CREST2.exe
-
 # Running CREST2
 
-1. Download the executable from https://drive.google.com/drive/folders/1zx12hGJttkTa0aG1jIO9AZ28VM7cDj-J or build it yourself.
-2. Start the application by double-clicking it.
+1. Download the zip archive from https://drive.google.com/drive/folders/1zx12hGJttkTa0aG1jIO9AZ28VM7cDj-J and extract it, or build it yourself -> look at the topic [Building from source](#building-from-source).  
+The archive includes the following relevant files:
+```
+CREST2.exe		- Binary
+zlibwapi.dll		- Library for data compression
+crest2.json		- Example how the browser output looks like
+crest2_formatted.json	- Example how the browser output looks like - formatted for better readability
+example.html		- Example how you can use the API in HTML
+Readme.txt		- Basic info how to use it
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There are some [screenhots](#screenshots) below, where you can see how the outputs look like.
+
+2. Start the application by double-clicking the CREST2.exe.
 3. Windows will complain about security (coming from an unknown/unverified source) both when downloading and starting the application. Please allow/unblock the application in order to allow it to start. Windows Firewall will also ask for permission to access the local network. Please allow it access for proper functioning.
 4. If Windows complains about missing DLLs (e.g. MSVCR120.DLL or similar), please download and install the Visual C++ Redistributable Packages for Visual Studio 2019 from https://www.visualstudio.com/de/downloads/ (vcredist_x86.exe, scroll down to "Other Tools and Frameworks"), then start again.
 5. Console will show a notification about the server being up and running and display port and URL information.
@@ -39,7 +38,7 @@ The project won't build without the proper setup of zlib. To properly enable zli
 
 1. Start Project CARS 2.
 2. Enable Shared Memory "Project CARS2" mode in the settings
-3. Open up a browser (Chrome for best results) and go to http://localhost:8180/crest2/v1/api
+3. Open up a browser (Chrome for best results) and go to http://localhost:8180/crest2/v1/api or for better readability to http://localhost:8180/crest2/v1/api?formatted=true
 4. Profit! F5/Refresh until you drop!
 
 
@@ -63,6 +62,7 @@ The following parameters are available:
 12. wheelsAndTyres
 13. carDamage
 14. weather
+15. formatted
 
 Example:  http://localhost:8180/crest2/v1/api?buildInfo=true will give you just the buildInfo.
 
@@ -72,6 +72,33 @@ Example3: http://localhost:8180/crest2/v1/api will give you the full set.
 
 NOTE: Sections are always in the order listed, never in the order of the request parameters.
 
+# Screenshots
+**CREST2.exe**\
+![Screenshot](docs/CREST2.jpg)
+
+**Browser Output default (Chrome)**\
+![Screenshot](docs/Browser_Output.jpg)  
+
+**Browser Output formatted (Chrome)**\
+![Screenshot](docs/Browser_Output_formatted.jpg)  
+
+**HTML Example opened in Chrome**\
+If you open the example.html, open the developer console and click on Request, you will get some selected values in the browser window and the complete array of Shared Memory data in the developer console, where you can find all variables for use in your own code:  
+![Screenshot](docs/HTML_Example.jpg)
+
+
 # Compression
 
 CREST can gzip the response body. Just add the following header to the HTTP request: "Accept-Encoding: gzip" and CREST will gzip the response and set the "Content-Encoding: gzip" HTTP response header. Regardless of the header, CREST will not compress output if the response is smaller than 128 bytes, to prevent overhead.
+
+# Building from source
+
+1. Download the source code
+2. Open it up in Visual Studio 2019
+
+The project won't build without the proper setup of zlib. To properly enable zlib:
+1. Download and extract the source code from http://www.zlib.net (Used http://zlib.net/zlib1211.zip)
+2. Extract and open .\contrib\vstudio\vc14\zlibvc.sln with Visual Studio
+3. Compile as Release and you will find 2 files in the folder .\contrib\vstudio\vc14\x86\ZlibDllRelease:
+- zlibwapi.lib - copy this file to the CREST2 source into the folder CREST2\lib
+- zlibwapi.dll - After compiling CREST2 this file must be parallel to your CREST2.exe
