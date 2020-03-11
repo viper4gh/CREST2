@@ -6,13 +6,13 @@
 #include "fossa.h"
 
 // Configuration properties
-#define CREST2_VERSION "v0.0.6"
-#define POLL_TIME_IN_MILLIS 17
+#define CREST2_VERSION "v0.1.0"
+#define POLL_TIME_IN_MILLIS 17	// the pcars physics engine runs with 600Hz = 1.67ms interval
 #define ESC_KEY 27
 #define CREST_API_URL "/crest2/v1/api"
 
 // Constants
-#define HTTP_RESPONSE_404 "{\"status\": \"404 Not found, please use the correct URL: " CREST_API_URL "\"}"
+#define HTTP_RESPONSE_404 "{\r\n  \"status\": \"404 Not found, please use the correct URL: " CREST_API_URL "\"\r\n}"
 
 // Server variables
 static const char *s_http_port = "8180";
