@@ -11,7 +11,7 @@ This project provides a way for developers to have access to the data provided b
 It's a windows native command line application (written in C++ and a fair bit of plain old C) that will act as a local web/application server and serve the data via JSON over HTTP by accessing a URL.
 
 Any web browser or HTTP client will be able to access the data both locally and inside the local network, which facilitates easy add-on development in any language (e.g. JavaScript, Java, C, C++, C#, etc. etc.) and platform (e.g. web browser, iOS, Android, Windows Phone or other) with a vast array of client REST libraries at your disposal.\
-If you want to see what you can do with it, then look here: https://github.com/eckhchri/pcars-ds-liveview/blob/master/README.md 
+If you want to see what you can do with it, then look here: [Project CARS Dedicated Server live view (also supports CREST2)](https://github.com/eckhchri/pcars-ds-liveview/blob/master/README.md)
 
 * See https://www.projectcarsgame.com/ for more info on Project CARS.
 * Latest binary download is always available at https://drive.google.com/drive/folders/1zx12hGJttkTa0aG1jIO9AZ28VM7cDj-J
