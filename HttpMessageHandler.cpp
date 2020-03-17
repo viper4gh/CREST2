@@ -3,9 +3,10 @@
 #include "FossaUtils.h"
 #include "SharedMemoryRenderer.h"
 #include "Utils.h"
-#include "sharedmemory.h"
+#include "Globals.h"
 #include "fossa.h"
 #include <sstream>
+#include "time.h"
 
 // Constants
 #define MAP_OBJECT_NAME "$pcars2$"
@@ -79,15 +80,54 @@ bool shouldGzipResponse(struct http_message *hm, int responseLength)	{
 
 // Renders the response
 void renderResponse(struct ns_connection *nc, const SharedMemory* sharedData, struct http_message *hm)  {
+	
+	// get current time for debugging info
+	char sTime[100];
+	time_t TimeNow = time(0);
+	strftime(sTime, 100, "%H:%M:%S", localtime(&TimeNow));
 
-	std::string responseJson = sharedMemoryRenderer.render(sharedData, getQueryString(hm));
+	// Odd sequence number indicates, that write into the shared memory is just happening, go on with even sequence number only
+	if (sharedData->mSequenceNumber % 2)
+	{
+		// activate it for a kind of debugging mode
+		//printf("%s: INFO - Odd sequence number detected - Data not accessable during write process by game, continue...\n",sTime);
+	}
+	else {
+		
+		indexChange = sharedData->mSequenceNumber - updateIndex;
+		updateIndex = sharedData->mSequenceNumber;
+
+		//Copy the whole structure before processing it, otherwise the risk of the game writing into it during processing is too high.
+		memcpy(localCopyTmp, sharedData, sizeof(SharedMemory));
+
+		if (localCopyTmp->mSequenceNumber != updateIndex)
+		{
+			// More writes had happened during the read. Should be rare, but can happen.
+			// activate it for a kind of debugging mode
+			//printf("%s: INFO - Sequence number mismatch detected - Data not accessable during write process by game, continue...\n", sTime);
+		}
+		else {
+			// At this point all checks are passed without problem and the localCopy can be updated with new data. 
+			// In all other error cases the data from the previous loop pass is used
+			memcpy(localCopy, localCopyTmp, sizeof(SharedMemory));
+		}
+	}
+	
+	//for debugging
+	//printf("Sequence number increase %d, current index %d, previous index %d\n", indexChange, localCopy->mSequenceNumber, updateIndex);
+
+	// old way with direct access to the Shared  Memory data
+	//std::string responseJson = sharedMemoryRenderer.render(sharedData, getQueryString(hm));
+	// new way with using the local copy data
+	std::string responseJson = sharedMemoryRenderer.render(localCopy, getQueryString(hm));
 	std::string response;
 
 	bool gzipResponse = shouldGzipResponse(hm, responseJson.size());
 
-	if (gzipResponse)	{
+	if (gzipResponse) {
 		response = Utils::gzipString(responseJson);
-	}else{
+	}
+	else {
 		response = responseJson;
 	}
 
@@ -95,8 +135,8 @@ void renderResponse(struct ns_connection *nc, const SharedMemory* sharedData, st
 	ns_printf(nc, "HTTP/1.1 200 OK\r\n"
 		"Content-Type: application/json\r\n"
 		"Cache-Control: no-cache\r\n"
-        "Access-Control-Allow-Origin: *\r\n");
-	if (gzipResponse)	{
+		"Access-Control-Allow-Origin: *\r\n");
+	if (gzipResponse) {
 		ns_printf(nc, "Content-Encoding: gzip\r\n");
 	}
 	ns_printf(nc, "Content-Length: %d\r\n\r\n",

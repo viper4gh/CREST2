@@ -4,9 +4,10 @@
 #include <conio.h>
 #include "HttpMessageHandler.h"
 #include "fossa.h"
+#include "Globals.h"
 
 // Configuration properties
-#define CREST2_VERSION "v0.1.0"
+#define CREST2_VERSION "v0.2.0"
 #define POLL_TIME_IN_MILLIS 17	// the pcars physics engine runs with 600Hz = 1.67ms interval
 #define ESC_KEY 27
 #define CREST_API_URL "/crest2/v1/api"
@@ -17,6 +18,12 @@
 // Server variables
 static const char *s_http_port = "8180";
 static struct ns_serve_http_opts s_http_server_opts;
+
+// Variables for integrity checks
+SharedMemory* localCopy;
+SharedMemory* localCopyTmp;
+unsigned int updateIndex;
+unsigned int indexChange;
 
 // Response generator
 static HttpMessageHandler httpMessageHandler = HttpMessageHandler();
@@ -54,6 +61,11 @@ int main()	{
 	nc = ns_bind(&mgr, s_http_port, ev_handler);
 	ns_set_protocol_http_websocket(nc);
 	s_http_server_opts.document_root = ".";
+
+	localCopy = new SharedMemory;
+	localCopyTmp = new SharedMemory;
+	updateIndex = 0;
+	indexChange= 0;
 	
 	// Print some information on the console
 	printf("# CREST2 - CARS2 REST API %s\n", CREST2_VERSION);
@@ -75,5 +87,7 @@ int main()	{
 
 	// We're done, free up the server and exit
 	ns_mgr_free(&mgr);
+	delete localCopy; 
+	delete localCopyTmp;
 	return 0;
 }
