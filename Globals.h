@@ -21,4 +21,5 @@ extern unsigned int updateIndex;
 extern unsigned int indexChange;
 extern SharedMemory* localCopy;
 extern SharedMemory* localCopyTmp;
+extern bool debug;  //Debug Mode
 #endif

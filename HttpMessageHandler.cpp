@@ -90,7 +90,9 @@ void renderResponse(struct ns_connection *nc, const SharedMemory* sharedData, st
 	if (sharedData->mSequenceNumber % 2)
 	{
 		// activate it for a kind of debugging mode
-		//printf("%s: INFO - Odd sequence number detected - Data not accessable during write process by game, continue...\n",sTime);
+		if (debug) {
+			printf("%s: INFO - Odd sequence number detected - Data not accessable during write process by game\n",sTime);
+		}
 	}
 	else {
 		
@@ -104,7 +106,10 @@ void renderResponse(struct ns_connection *nc, const SharedMemory* sharedData, st
 		{
 			// More writes had happened during the read. Should be rare, but can happen.
 			// activate it for a kind of debugging mode
-			//printf("%s: INFO - Sequence number mismatch detected - Data not accessable during write process by game, continue...\n", sTime);
+			if (debug) {
+				printf("%s: INFO - Sequence number mismatch detected - Data not accessable during write process by game\n", sTime);
+			}
+			
 		}
 		else {
 			// At this point all checks are passed without problem and the localCopy can be updated with new data. 
