@@ -9,7 +9,10 @@
 
 // Configuration properties
 #define CREST2_VERSION "v0.3.0"
-#define POLL_TIME_IN_MILLIS 17	// the pcars physics engine runs with 600Hz = 1.67ms interval
+#define POLL_TIME_IN_MILLIS 17	
+// fossa definition: maximum number of milliseconds to sleep for ns_mgr_poll/ fossa calls the winsock select() function with it, where it is a timeout:
+// The select function returns the total number of socket handles that are ready and contained in the fd_set structures, zero if the time limit expired.
+// It is the maximum time for select to wait
 #define ESC_KEY 27
 #define CREST_API_URL "/crest2/v1/api"
 
@@ -26,7 +29,7 @@ SharedMemory* localCopyTmp;
 unsigned int updateIndex;
 unsigned int indexChange;
 // Debug Mode
-bool debug = false;
+int debug_level = 0;
 
 // Response generator
 static HttpMessageHandler httpMessageHandler = HttpMessageHandler();
@@ -61,7 +64,7 @@ int main()	{
 	LPWSTR* szArgList;
 	int argCount;
 	int port = -1;
-	int PollInt = -1;
+	int PollTimeout = -1;
 	bool help = false;
 	
 	szArgList = CommandLineToArgvW(GetCommandLineW(), &argCount);
@@ -74,45 +77,46 @@ int main()	{
 			if (wcscmp(szArgList[i], L"-p") == 0 )
 			{
 				port = _wtoi(szArgList[i + 1]);
-				//printf("\nPort: %i\n",port);
 				
 			}
-			else if (wcscmp(szArgList[i], L"-i") == 0)
+			else if (wcscmp(szArgList[i], L"-t") == 0)
 			{
-				PollInt = _wtoi(szArgList[i + 1]);
-				//printf("\nPollInt: %i\n", PollInt);
-			}	
+				PollTimeout = _wtoi(szArgList[i + 1]);
+			}
 		}
 		if (wcscmp(szArgList[i], L"-d") == 0)
 		{
-			debug = true;
-			//printf("\nDebug: %d\n", debug);
+			debug_level = 1;
+		}
+		if (wcscmp(szArgList[i], L"-dd") == 0)
+		{
+			debug_level = 2;
 		}
 		if (wcscmp(szArgList[i], L"-h") == 0)
 		{
 			help = true;
-			//printf("\nDebug: %d\n", debug);
 		}
 	}
 
 	LocalFree(szArgList);
+	// End Handling of command line arguments
 
 	if (help) {
 		printf("# CREST2 - CARS2 REST API %s\n", CREST2_VERSION);
 		printf("# (c) 2015 Lars Rosenquist\n");
 		printf("#          updated by Viper\n\n");
 		printf("Usage:\n");
-		printf("CREST2.exe [-p 8180] [-i 17] [-d] [-h]\n");
-		printf("  -p	Change TCP Port, default: 8180, allowed: 1025-65534\n");
-		printf("  -i	Change Memory Polling Interval im ms, default: 17, allowed: 2-999\n");
-		printf("  -d	Debug Mode, show some more info for Integrity Checks\n");
+		printf("CREST2.exe [-p 8180] [-t 17] [-d[d]] [-h]\n");
+		printf("  -p	TCP Port, default: 8180, allowed: 1025-65534\n");
+		printf("  -t	Websocket Timeout im ms, default: 17, allowed: 1-10000\n");
+		printf("  -d	Debug Level 1, show some more info for Integrity Checks\n");
+		printf("  -dd	Debug Level 2, show more info for Integrity Checks\n");
 		printf("  -h	Help\n");
 	}
 	else {
-
 		//convert port from int to char*
 		std::string s = std::to_string(port);
-		static const char* s_http_port;// = s.c_str();
+		static const char* s_http_port;
 
 		// set HTTP Port
 		if (port >= 1025 && port <= 65534) {
@@ -122,12 +126,10 @@ int main()	{
 			s_http_port = s_http_port_default;
 		}
 
-		// set poll interval
-		if (PollInt < 2 || PollInt > 999) {
-			PollInt = POLL_TIME_IN_MILLIS;
+		// set websocket timeout for winsock select function
+		if (PollTimeout < 1 || PollTimeout > 10000) {
+			PollTimeout = POLL_TIME_IN_MILLIS;
 		}
-
-
 
 		// Setup the server
 		struct ns_mgr mgr;
@@ -137,6 +139,7 @@ int main()	{
 		ns_set_protocol_http_websocket(nc);
 		s_http_server_opts.document_root = ".";
 
+		// initialize globals
 		localCopy = new SharedMemory;
 		localCopyTmp = new SharedMemory;
 		updateIndex = 0;
@@ -147,15 +150,15 @@ int main()	{
 		printf("# (c) 2015 Lars Rosenquist\n");
 		printf("#          updated by Viper\n\n");
 		printf("# Server started on TCP port: %s\n", s_http_port);
-		printf("# Memory Polling Interval: %i ms\n", PollInt);
-		if (debug) { printf("# Debug Mode\n"); }
+		printf("# Websocket Timeout: %i ms\n", PollTimeout);
+		if (debug_level > 0) { printf("# Debug Level: %i\n", debug_level); }
 		printf("# API is available at http://localhost:%s%s \n", s_http_port, CREST_API_URL);
 		printf("# Press ESC to terminate\n");
 
 		// Keep polling until ESC is hit
 		while (true) {
 
-			ns_mgr_poll(&mgr, PollInt);
+			ns_mgr_poll(&mgr, PollTimeout);
 
 			if (_kbhit() && _getch() == ESC_KEY) {
 				break;

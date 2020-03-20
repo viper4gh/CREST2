@@ -90,7 +90,7 @@ void renderResponse(struct ns_connection *nc, const SharedMemory* sharedData, st
 	if (sharedData->mSequenceNumber % 2)
 	{
 		// activate it for a kind of debugging mode
-		if (debug) {
+		if (debug_level > 0) {
 			printf("%s: INFO - Odd sequence number detected - Data not accessable during write process by game\n",sTime);
 		}
 	}
@@ -106,7 +106,7 @@ void renderResponse(struct ns_connection *nc, const SharedMemory* sharedData, st
 		{
 			// More writes had happened during the read. Should be rare, but can happen.
 			// activate it for a kind of debugging mode
-			if (debug) {
+			if (debug_level > 0) {
 				printf("%s: INFO - Sequence number mismatch detected - Data not accessable during write process by game\n", sTime);
 			}
 			
@@ -119,8 +119,10 @@ void renderResponse(struct ns_connection *nc, const SharedMemory* sharedData, st
 	}
 	
 	//for debugging
-	//printf("Sequence number increase %d, current index %d, previous index %d\n", indexChange, localCopy->mSequenceNumber, updateIndex);
-
+	if (debug_level > 1) {
+		printf("%s: INFO - Sequence number increase %d, current index %d, previous index %d\n", sTime, indexChange, localCopy->mSequenceNumber, updateIndex);
+	}
+	
 	// old way with direct access to the Shared  Memory data
 	//std::string responseJson = sharedMemoryRenderer.render(sharedData, getQueryString(hm));
 	// new way with using the local copy data
