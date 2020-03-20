@@ -73,6 +73,18 @@ Example3: http://localhost:8180/crest2/v1/api will give you the full set.
 
 NOTE: Sections are always in the order listed, never in the order of the request parameters.
 
+# Command Line Options
+```
+CREST2.exe [-p 8180] [-t 17] [-d[d]] [-h]
+  -p    TCP Port, default: 8180, allowed: 1025-65534
+  -t    Websocket Timeout im ms, default: 17, allowed: 1-10000
+  -d    Debug Level 1, show some more info for Integrity Checks
+  -dd   Debug Level 2, show more info for Integrity Checks
+  -h    Help
+```
+The Websocket Timeout is the timeout for the winsock select() function which is used by the Fossa Library. It returns the number of ready socket handles. The timeout is the maximum time for the select function to wait.\
+Changing the value seems to have no effect, but maybe someone finds a use case where it is relevant.
+
 # Screenshots
 **CREST2.exe**\
 ![Screenshot](docs/CREST2.jpg)
