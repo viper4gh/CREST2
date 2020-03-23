@@ -1,10 +1,10 @@
 // Dependencies
 #include "HttpMessageHandler.h"
-#include "FossaUtils.h"
+#include "MongooseUtils.h"
 #include "SharedMemoryRenderer.h"
 #include "Utils.h"
 #include "Globals.h"
-#include "fossa.h"
+#include "mongoose.h"
 #include <sstream>
 #include "time.h"
 
@@ -19,9 +19,9 @@ static SharedMemoryRenderer sharedMemoryRenderer = SharedMemoryRenderer();
 HttpMessageHandler::HttpMessageHandler(){};
 
 // Outputs an HTTP 503 on the supplied connection
-void sendServiceUnavailable(struct ns_connection *nc)    {
+void sendServiceUnavailable(struct mg_connection *nc)    {
     // Send HTTP 503
-	ns_printf(nc, "HTTP/1.1 503 Service unavailable\r\n"
+	mg_printf(nc, "HTTP/1.1 503 Service unavailable\r\n"
 		"Content-Type: application/json\r\n"
 		"Cache-Control: no-cache\r\n"
         "Access-Control-Allow-Origin: *\r\n"
@@ -30,9 +30,9 @@ void sendServiceUnavailable(struct ns_connection *nc)    {
 }
 
 // Outputs an HTTP 409 on the supplied connection
-void sendConflict(struct ns_connection *nc)    {
+void sendConflict(struct mg_connection *nc)    {
 	// Send HTTP 409
-	ns_printf(nc, "HTTP/1.1 409 Conflict\r\n"
+	mg_printf(nc, "HTTP/1.1 409 Conflict\r\n"
 		"Content-Type: application/json\r\n"
 		"Cache-Control: no-cache\r\n"
         "Access-Control-Allow-Origin: *\r\n"
@@ -41,9 +41,9 @@ void sendConflict(struct ns_connection *nc)    {
 }
 
 // Outputs an HTTP 200 on the supplied connection for an OPTIONS request
-void sendOptions(struct ns_connection *nc)    {
+void sendOptions(struct mg_connection *nc)    {
     // Send HTTP 200
-    ns_printf(nc, "HTTP/1.1 200 Ok\r\n"
+    mg_printf(nc, "HTTP/1.1 200 Ok\r\n"
               "Access-Control-Allow-Origin: *\r\n"
               "Access-Control-Allow-Methods: GET, OPTIONS\r\n"
               "Access-Control-Max-Age: 86400\r\n"
@@ -79,7 +79,7 @@ bool shouldGzipResponse(struct http_message *hm, int responseLength)	{
 }
 
 // Renders the response
-void renderResponse(struct ns_connection *nc, const SharedMemory* sharedData, struct http_message *hm)  {
+void renderResponse(struct mg_connection *nc, const SharedMemory* sharedData, struct http_message *hm)  {
 	
 	// get current time for debugging info
 	char sTime[100];
@@ -139,21 +139,21 @@ void renderResponse(struct ns_connection *nc, const SharedMemory* sharedData, st
 	}
 
 	// build HTTP OK response with JSON response body
-	ns_printf(nc, "HTTP/1.1 200 OK\r\n"
+	mg_printf(nc, "HTTP/1.1 200 OK\r\n"
 		"Content-Type: application/json\r\n"
 		"Cache-Control: no-cache\r\n"
 		"Access-Control-Allow-Origin: *\r\n");
 	if (gzipResponse) {
-		ns_printf(nc, "Content-Encoding: gzip\r\n");
+		mg_printf(nc, "Content-Encoding: gzip\r\n");
 	}
-	ns_printf(nc, "Content-Length: %d\r\n\r\n",
+	mg_printf(nc, "Content-Length: %d\r\n\r\n",
 		(int)response.size());
-	ns_send(nc, response.data(), response.size());
+	mg_send(nc, response.data(), response.size());
 
 }
 
 // Processes the shared memory
-void processSharedMemoryData(struct ns_connection *nc, const SharedMemory* sharedData, struct http_message *hm)   {
+void processSharedMemoryData(struct mg_connection *nc, const SharedMemory* sharedData, struct http_message *hm)   {
 	// Ensure we're sync'd to the correct data version
 	if (sharedData->mVersion != SHARED_MEMORY_VERSION)	{
 		// build conflict response
@@ -166,7 +166,7 @@ void processSharedMemoryData(struct ns_connection *nc, const SharedMemory* share
 }
 
 // Processes the memory mapped file
-void processFile(struct ns_connection *nc, HANDLE fileHandle, struct http_message *hm)    {
+void processFile(struct mg_connection *nc, HANDLE fileHandle, struct http_message *hm)    {
 
 	const SharedMemory* sharedData = (SharedMemory*)MapViewOfFile(fileHandle, PAGE_READONLY, 0, 0, sizeof(SharedMemory));
 
@@ -183,7 +183,7 @@ void processFile(struct ns_connection *nc, HANDLE fileHandle, struct http_messag
 
 }
 
-void handleGet(struct ns_connection *nc, struct http_message *hm)    {
+void handleGet(struct mg_connection *nc, struct http_message *hm)    {
     // Open the memory mapped file
     HANDLE fileHandle = OpenFileMappingA(PAGE_READONLY, FALSE, MAP_OBJECT_NAME);
     
@@ -199,7 +199,7 @@ void handleGet(struct ns_connection *nc, struct http_message *hm)    {
     }
 }
 
-void HttpMessageHandler::handle(struct ns_connection *nc, struct http_message *hm)	{
+void HttpMessageHandler::handle(struct mg_connection *nc, struct http_message *hm)	{
     std::string requestMethod = getMethod(hm);
     if (requestMethod.compare("GET") == 0)  {
         handleGet(nc, hm);

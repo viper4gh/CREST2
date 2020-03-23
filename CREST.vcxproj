@@ -84,13 +84,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="fossa.c" />
     <ClCompile Include="CRESTServer.cpp" />
+    <ClCompile Include="mongoose.c" />
     <ClCompile Include="SharedMemoryRenderer.cpp" />
     <ClCompile Include="HttpMessageHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FossaUtils.h" />
+    <ClInclude Include="MongooseUtils.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="SharedMemoryRenderer.h" />
     <ClInclude Include="HttpMessageHandler.h" />

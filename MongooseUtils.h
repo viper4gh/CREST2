@@ -1,5 +1,5 @@
 #include <string>
-#include "fossa.h"
+#include "mongoose.h"
 
 class FossaUtils	{
 public:
@@ -9,11 +9,11 @@ public:
 	static std::string getHeaderValue(std::string name, struct http_message *hm)	{
 		std::string result;
 		for (size_t i = 0; i < ARRAY_SIZE(hm->header_names); i++)	{
-			ns_str headerName = hm->header_names[i];
+			mg_str headerName = hm->header_names[i];
 			std::string headerNameString(headerName.p, headerName.len);
 
 			if (headerNameString.compare(name) == 0)	{
-				ns_str headerValue = hm->header_values[i];
+				mg_str headerValue = hm->header_values[i];
 				result = std::string(headerValue.p, headerValue.len);
 			}
 		}

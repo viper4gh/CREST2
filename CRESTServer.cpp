@@ -1,14 +1,14 @@
 // Dependencies
+#include "mongoose.h"
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
 #include "HttpMessageHandler.h"
-#include "fossa.h"
 #include "Globals.h"
 #include <sstream>
 
 // Configuration properties
-#define CREST2_VERSION "v0.3.1"
+#define CREST2_VERSION "v0.4.0"
 #define POLL_TIME_IN_MILLIS 17	
 // fossa definition: maximum number of milliseconds to sleep for ns_mgr_poll/ fossa calls the winsock select() function with it, where it is a timeout:
 // The select function returns the total number of socket handles that are ready and contained in the fd_set structures, zero if the time limit expired.
@@ -21,7 +21,7 @@
 
 // Server variables
 static const char *s_http_port_default = "8180";
-static struct ns_serve_http_opts s_http_server_opts;
+static struct mg_serve_http_opts s_http_server_opts;
 
 // Variables for integrity checks, definition in Globals.h
 SharedMemory* localCopy;
@@ -35,17 +35,17 @@ int debug_level = 0;
 static HttpMessageHandler httpMessageHandler = HttpMessageHandler();
 
 // Server request handler method
-static void ev_handler(struct ns_connection *nc, int ev, void *ev_data) {
+static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 	struct http_message *hm = (struct http_message *) ev_data;
 
 	switch (ev) {
-	case NS_HTTP_REQUEST:
+	case MG_EV_HTTP_REQUEST:
 		// Only handle HTTP requests on the API url
-		if (ns_vcmp(&hm->uri, CREST_API_URL) == 0) {
+		if (mg_vcmp(&hm->uri, CREST_API_URL) == 0) {
 			httpMessageHandler.handle(nc, hm);
 		}else{
 			// Unknown URI, return a 404
-			ns_printf(nc, "HTTP/1.1 404 Not found\r\n"
+			mg_printf(nc, "HTTP/1.1 404 Not found\r\n"
 				"Content-Type: application/json\r\n"
 				"Cache-Control: no-cache\r\n"
                 "Access-Control-Allow-Origin: *\r\n"
@@ -133,10 +133,10 @@ int main()	{
 	}
 
 	// Setup the server
-	struct ns_mgr mgr;
-	struct ns_connection* nc;
-	ns_mgr_init(&mgr, NULL);
-	nc = ns_bind(&mgr, s_http_port, ev_handler);
+	struct mg_mgr mgr;
+	struct mg_connection* nc;
+	mg_mgr_init(&mgr, NULL);
+	nc = mg_bind(&mgr, s_http_port, ev_handler);
 
 	// catch error if TCP port is already in use
 	if (nc == NULL) {
@@ -149,7 +149,7 @@ int main()	{
 		}	
 	}
 
-	ns_set_protocol_http_websocket(nc);
+	mg_set_protocol_http_websocket(nc);
 	s_http_server_opts.document_root = ".";
 
 	// initialize globals
@@ -171,7 +171,7 @@ int main()	{
 	// Keep polling until ESC is hit
 	while (true) {
 
-		ns_mgr_poll(&mgr, PollTimeout);
+		mg_mgr_poll(&mgr, PollTimeout);
 
 		if (_kbhit() && _getch() == ESC_KEY) {
 			break;
@@ -179,7 +179,7 @@ int main()	{
 	}
 
 	// We're done, free up the server and exit
-	ns_mgr_free(&mgr);
+	mg_mgr_free(&mgr);
 	delete localCopy;
 	delete localCopyTmp;
 
