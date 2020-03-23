@@ -8,7 +8,7 @@
 #include <sstream>
 
 // Configuration properties
-#define CREST2_VERSION "v0.3.0"
+#define CREST2_VERSION "v0.3.1"
 #define POLL_TIME_IN_MILLIS 17	
 // fossa definition: maximum number of milliseconds to sleep for ns_mgr_poll/ fossa calls the winsock select() function with it, where it is a timeout:
 // The select function returns the total number of socket handles that are ready and contained in the fd_set structures, zero if the time limit expired.
@@ -112,64 +112,76 @@ int main()	{
 		printf("  -d	Debug Level 1, show some more info for Integrity Checks\n");
 		printf("  -dd	Debug Level 2, show more info for Integrity Checks\n");
 		printf("  -h	Help\n");
+		return 0;
+	}
+
+	//convert port from int to char*
+	std::string s = std::to_string(port);
+	static const char* s_http_port;
+
+	// set HTTP Port
+	if (port >= 1025 && port <= 65534) {
+		s_http_port = s.c_str();
 	}
 	else {
-		//convert port from int to char*
-		std::string s = std::to_string(port);
-		static const char* s_http_port;
+		s_http_port = s_http_port_default;
+	}
 
-		// set HTTP Port
-		if (port >= 1025 && port <= 65534) {
-			s_http_port = s.c_str();
-		}
-		else {
-			s_http_port = s_http_port_default;
-		}
+	// set websocket timeout for winsock select function
+	if (PollTimeout < 1 || PollTimeout > 10000) {
+		PollTimeout = POLL_TIME_IN_MILLIS;
+	}
 
-		// set websocket timeout for winsock select function
-		if (PollTimeout < 1 || PollTimeout > 10000) {
-			PollTimeout = POLL_TIME_IN_MILLIS;
-		}
+	// Setup the server
+	struct ns_mgr mgr;
+	struct ns_connection* nc;
+	ns_mgr_init(&mgr, NULL);
+	nc = ns_bind(&mgr, s_http_port, ev_handler);
 
-		// Setup the server
-		struct ns_mgr mgr;
-		struct ns_connection* nc;
-		ns_mgr_init(&mgr, NULL);
-		nc = ns_bind(&mgr, s_http_port, ev_handler);
-		ns_set_protocol_http_websocket(nc);
-		s_http_server_opts.document_root = ".";
-
-		// initialize globals
-		localCopy = new SharedMemory;
-		localCopyTmp = new SharedMemory;
-		updateIndex = 0;
-		indexChange = 0;
-
-		// Print some information on the console
-		printf("# CREST2 - CARS2 REST API %s\n", CREST2_VERSION);
-		printf("# (c) 2015 Lars Rosenquist\n");
-		printf("#          updated by Viper\n\n");
-		printf("# Server started on TCP port: %s\n", s_http_port);
-		printf("# Websocket Timeout: %i ms\n", PollTimeout);
-		if (debug_level > 0) { printf("# Debug Level: %i\n", debug_level); }
-		printf("# API is available at http://localhost:%s%s \n", s_http_port, CREST_API_URL);
-		printf("# Press ESC to terminate\n");
-
-		// Keep polling until ESC is hit
+	// catch error if TCP port is already in use
+	if (nc == NULL) {
+		printf("\n# The port %s is already in use by another application.\n# Please change it with option \"-p\" or close the other application.\n\n Press any key to exit...\n", s_http_port);
+		// wait for user input. Without it and if the application is executed by double click or via shortcut where it opens a new window, it will close directly and the user will not see the error.
 		while (true) {
-
-			ns_mgr_poll(&mgr, PollTimeout);
-
-			if (_kbhit() && _getch() == ESC_KEY) {
-				break;
+			if (_kbhit()) {
+				return 1;
 			}
-		}
+		}	
+	}
 
-		// We're done, free up the server and exit
-		ns_mgr_free(&mgr);
-		delete localCopy;
-		delete localCopyTmp;
-	} 
+	ns_set_protocol_http_websocket(nc);
+	s_http_server_opts.document_root = ".";
+
+	// initialize globals
+	localCopy = new SharedMemory;
+	localCopyTmp = new SharedMemory;
+	updateIndex = 0;
+	indexChange = 0;
+
+	// Print some information on the console
+	printf("# CREST2 - CARS2 REST API %s\n", CREST2_VERSION);
+	printf("# (c) 2015 Lars Rosenquist\n");
+	printf("#          updated by Viper\n\n");
+	printf("# Server started on TCP port: %s\n", s_http_port);
+	printf("# Websocket Timeout: %i ms\n", PollTimeout);
+	if (debug_level > 0) { printf("# Debug Level: %i\n", debug_level); }
+	printf("# API is available at http://localhost:%s%s \n", s_http_port, CREST_API_URL);
+	printf("# Press ESC to terminate\n");
+
+	// Keep polling until ESC is hit
+	while (true) {
+
+		ns_mgr_poll(&mgr, PollTimeout);
+
+		if (_kbhit() && _getch() == ESC_KEY) {
+			break;
+		}
+	}
+
+	// We're done, free up the server and exit
+	ns_mgr_free(&mgr);
+	delete localCopy;
+	delete localCopyTmp;
 
 	return 0;
 }
