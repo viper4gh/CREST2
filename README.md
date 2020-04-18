@@ -82,7 +82,7 @@ CREST2.exe [-p 8180] [-t 17] [-d[d]] [-h]
   -dd   Debug Level 2, show more info for Integrity Checks
   -h    Help
 ```
-The Websocket Timeout is the timeout for the winsock select() function which is used by the Fossa Library. It returns the number of ready socket handles. The timeout is the maximum time for the select function to wait.\
+The Websocket Timeout is the timeout for the winsock select() function which is used by the Mongoose Library. It returns the number of ready socket handles. The timeout is the maximum time for the select function to wait.\
 Changing the value seems to have no effect, but maybe someone finds a use case where it is relevant.
 
 # Screenshots
