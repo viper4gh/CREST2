@@ -4,9 +4,9 @@ First of all this Repository is a copy from here: https://github.com/NLxAROSA/CR
 
 Thanks Lars for his hard work, but he is no longer developing the project and I hope a can update it to the current Shared Memory Version.
 
-# Introducing CREST2 - also known as the CARS2 REST API #
+# Introducing CREST2 - also known as the CARS REST API 2#
 
-This project provides a way for developers to have access to the data provided by Project CARS 2 Shared Memory in a more portable and accessible format than a mapped memory file.
+This project provides a way for developers to have access to the data provided by Project CARS 2 and Automobilista 2 Shared Memory in a more portable and accessible format than a mapped memory file.
 
 It's a windows native command line application (written in C++ and a fair bit of plain old C) that will act as a local web/application server and serve the data via JSON over HTTP by accessing a URL.
 
@@ -35,9 +35,9 @@ Readme.txt		- Basic info how to use it
 4. If Windows complains about missing DLLs (e.g. MSVCR120.DLL or similar), please download and install the Visual C++ Redistributable Packages for Visual Studio 2019 from https://www.visualstudio.com/de/downloads/ (vcredist_x86.exe, scroll down to "Other Tools and Frameworks"), then start again.
 5. Console will show a notification about the server being up and running and display port and URL information.
 
-# Connecting to Project CARS 2
+# Connecting to Project CARS 2 or Automobilista 2
 
-1. Start Project CARS 2.
+1. Start Project CARS 2 or Automobilista 2.
 2. Enable Shared Memory "Project CARS2" mode in the settings
 3. Open up a browser (Chrome for best results) and go to http://localhost:8180/crest2/v1/api or for better readability to http://localhost:8180/crest2/v1/api?formatted=true
 4. Profit! F5/Refresh until you drop!
