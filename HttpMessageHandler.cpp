@@ -10,8 +10,8 @@
 
 // Constants
 #define MAP_OBJECT_NAME "$pcars2$"
-#define HTTP_RESPONSE_503 "{\r\n  \"status\": \"503 Service unavailable, is Project CARS running and is Shared Memory enabled?\"\r\n}"
-#define HTTP_RESPONSE_409 "{\r\n  \"status\": \"409 Conflict, are CREST and Project CARS both at the latest version?\"\r\n}"
+#define HTTP_RESPONSE_503 "{\r\n  \"status\": \"503 Service unavailable, is PCARS2 or AMS2 running and is Shared Memory enabled?\"\r\n}"
+#define HTTP_RESPONSE_409 "{\r\n  \"status\": \"409 Conflict, are CREST and PCARS2 or AMS2 both at the latest version?\"\r\n}"
 #define GZIP_THRESHOLD 128
 
 static SharedMemoryRenderer sharedMemoryRenderer = SharedMemoryRenderer();

@@ -258,6 +258,14 @@ std::string SharedMemoryRenderer::render(const SharedMemory* sharedData, std::st
 	std::regex target("formatted=true");
 	std::string replacement = "";
 
+	//Get current system UTC time for adding a timestamp to the data
+	struct timespec ts;
+	if (timespec_get(&ts, TIME_UTC) != TIME_UTC)
+	{
+		printf("timespec_get failed!\n");
+	}
+	uint64_t cur_time = 1000000000 * ts.tv_sec + ts.tv_nsec;
+
 	// if the URL parameter includes "formatted=true" then generate a formatted browser output
 	if (Utils::contains(queryString, "formatted=true")) {
 		tab = TAB;
@@ -342,6 +350,7 @@ std::string SharedMemoryRenderer::render(const SharedMemory* sharedData, std::st
 		renderWeather(ss, sharedData);
 		skipSeparator = false;
 	}
+	ss << "," << nl << tab << "\"timestamp\":" << cur_time / 100000; // curtime in milliseconds + 1 digit - for milliseconds divide it by 10 (division of integers truncates the value instead of rounding, in result 1 digit more for precision)
 	ss << nl << "}";
 
 	return ss.str();
