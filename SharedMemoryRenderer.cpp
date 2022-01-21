@@ -265,6 +265,8 @@ std::string SharedMemoryRenderer::render(const SharedMemory* sharedData, std::st
 		printf("timespec_get failed!\n");
 	}
 	uint64_t cur_time = 1000000000 * ts.tv_sec + ts.tv_nsec;
+	uint64_t cur_time_ms = (uint64_t) round((double)cur_time / 1000000);	// cast to double first for correct rounding and cast to uint64_t back
+	//printf("cur Time: %llu , cur Time ms: %llu\n", cur_time, cur_time_ms);
 
 	// if the URL parameter includes "formatted=true" then generate a formatted browser output
 	if (Utils::contains(queryString, "formatted=true")) {
@@ -350,7 +352,8 @@ std::string SharedMemoryRenderer::render(const SharedMemory* sharedData, std::st
 		renderWeather(ss, sharedData);
 		skipSeparator = false;
 	}
-	ss << "," << nl << tab << "\"timestamp\":" << cur_time / 100000; // curtime in milliseconds + 1 digit - for milliseconds divide it by 10 (division of integers truncates the value instead of rounding, in result 1 digit more for precision)
+	//ss << "," << nl << tab << "\"timestamp\":" << cur_time / 100000; // curtime in milliseconds + 1 digit - for milliseconds divide it by 10 (division of integers truncates the value instead of rounding, in result 1 digit more for precision)
+	ss << "," << nl << tab << "\"timestamp\":" << cur_time_ms;
 	ss << nl << "}";
 
 	return ss.str();
