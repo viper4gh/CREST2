@@ -158,7 +158,7 @@ void processSharedMemoryData(struct mg_connection *nc, const SharedMemory* share
 	if (sharedData->mVersion != SHARED_MEMORY_VERSION)	{
 		// build conflict response
 		sendConflict(nc);
-		printf("Data version mismatch, please make sure that your pCARS version matches your CREST version\n");
+		printf("Data version mismatch, please make sure that your pCARS version matches your CREST version\n    Expected: v%d, Current: v%d\n", SHARED_MEMORY_VERSION, sharedData->mVersion);
 	}else{
 		renderResponse(nc, sharedData, hm);
 	}
