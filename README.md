@@ -4,6 +4,9 @@ First of all this Repository is a copy from here: https://github.com/NLxAROSA/CR
 
 Thanks Lars for his hard work, but he is no longer developing the project and I hope a can update it to the current Shared Memory Version.
 
+&#x1F534; For an Automobilista 2 compatible version go here: https://github.com/viper4gh/CREST2-AMS2 \
+Since version 1.3.3.0 Automobilista 2 uses an updated Shared Memory API which is not compatible with this CREST2 version anymore.
+
 # Introducing CREST2 - also known as the CARS REST API 2#
 
 This project provides a way for developers to have access to the data provided by Project CARS 2 and Automobilista 2 Shared Memory in a more portable and accessible format than a mapped memory file.
